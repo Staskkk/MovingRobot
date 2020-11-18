@@ -151,8 +151,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 10
-  rotateSpeed: 5
-  pointReachedDist: 0.1
+  rotateSpeed: 200
+  pointReachedDist: 0.2
   angleRotatedDegree: 5
   isMoving: 0
   isFinished: 0
@@ -6216,6 +6216,9 @@ MonoBehaviour:
   pointPrefab: {fileID: 8182745756157692166, guid: ed528f7c7e9ef6d40aa6440504c220bf,
     type: 3}
   pointsObjects: []
+  smallPointPrefab: {fileID: 4988951915067947203, guid: f297bb4add5cc5d4eb2ac69d690c1067,
+    type: 3}
+  smallPointsObjects: []
 --- !u!4 &1192458118
 Transform:
   m_ObjectHideFlags: 0

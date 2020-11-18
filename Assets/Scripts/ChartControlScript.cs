@@ -8,11 +8,12 @@ public class ChartControlScript : MonoBehaviour
 
     public GameObject pointPrefab;
     public List<GameObject> pointsObjects;
+    public GameObject smallPointPrefab;
+    public List<GameObject> smallPointsObjects;
 
     public void GeneratePoints(Vector2[] points)
     {
         ClearPoints();
-
         pointsObjects = new List<GameObject>(points.Length);
         foreach (var point in points)
         {
@@ -20,7 +21,23 @@ public class ChartControlScript : MonoBehaviour
         }
     }
 
-    public void ClearPoints()
+    public void GenerateSmallPoints(ITravel travel)
+    {
+        ClearSmallPoints();
+        smallPointsObjects = new List<GameObject>(10000);
+        foreach (var point in travel)
+        {
+            smallPointsObjects.Add(Instantiate(smallPointPrefab, new Vector3(point.x * ratio, 0, point.y * ratio), Quaternion.identity, transform));
+        }
+    }
+
+    public void ClearAllPoints()
+    {
+        ClearPoints();
+        ClearSmallPoints();
+    }
+
+    private void ClearPoints()
     {
         if (pointsObjects != null)
         {
@@ -31,5 +48,18 @@ public class ChartControlScript : MonoBehaviour
         }
 
         pointsObjects = null;
+    }
+
+    private void ClearSmallPoints()
+    {
+        if (smallPointsObjects != null)
+        {
+            foreach (var smallPointObject in smallPointsObjects)
+            {
+                Destroy(smallPointObject);
+            }
+        }
+
+        smallPointsObjects = null;
     }
 }

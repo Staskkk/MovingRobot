@@ -103,10 +103,15 @@ public class MenuScript : MonoBehaviour
                 break;
         }
 
-        chartControlScript.ClearPoints();
+        chartControlScript.ClearAllPoints();
         if (travelType != TravelType.Curve)
         {
             chartControlScript.GeneratePoints(points);
+        }
+
+        if (travelType != TravelType.Points)
+        {
+            chartControlScript.GenerateSmallPoints(travel);
         }
 
         robotMoveScript.moveSpeed = float.Parse(robotSpeedInput.text, Culture);

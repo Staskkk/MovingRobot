@@ -11,10 +11,10 @@ public class RobotMoveScript : MonoBehaviour
     public float rotateSpeed = 1f;
 
     public float pointReachedDist = 0.01f;
-    public float angleRotatedDegree = 1f;
+    public float angleRotatedDegree = 5f;
+    public float minAngleToRotateDegree = 2f;
 
     public bool isMoving;
-    //public bool isRotating;
     public bool isFinished;
 
     public event EventHandler movingFinished;
@@ -26,34 +26,48 @@ public class RobotMoveScript : MonoBehaviour
     {
         if (isMoving)
         {
-            //var lookRotation = Quaternion.LookRotation(pointDest - transform.position);
-            //transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(pointDest - transform.position), rotateSpeed * Time.deltaTime);
-            //if (isRotating && Quaternion.Angle(transform.rotation, lookRotation) > angleRotatedDegree)
-            //{
-            //    return;
-            //}
-            //else
-            //{
-            //    isRotating = false;
-            //}
-
-            transform.Translate((pointDest - transform.position).normalized * moveSpeed * Time.deltaTime, Space.World);
-            if (Vector3.Distance(transform.position, pointDest) <= pointReachedDist)
+            if (CorrectRotation())
             {
-                do
-                {
-                    if (!pointIterator.MoveNext())
-                    {
-                        StopMovement(true);
-                        return;
-                    }
+                return;
+            }
 
-                    pointDest = PointToPosition(pointIterator.Current);
-                } while (Vector3.Distance(transform.position, pointDest) <= pointReachedDist);
-                transform.LookAt(pointDest);
-                //isRotating = true;
+            for (int i = 0; i < Mathf.RoundToInt(moveSpeed); ++i) {
+                transform.Translate((pointDest - transform.position).normalized * Time.deltaTime, Space.World);
+                if (Vector3.Distance(transform.position, pointDest) <= pointReachedDist)
+                {
+                    do
+                    {
+                        if (!pointIterator.MoveNext())
+                        {
+                            StopMovement(true);
+                            return;
+                        }
+
+                        pointDest = PointToPosition(pointIterator.Current);
+                    } while (Vector3.Distance(transform.position, pointDest) <= pointReachedDist);
+                }
             }
         }
+    }
+
+    private bool CorrectRotation()
+    {
+        var lookRotation = Quaternion.LookRotation(pointDest - transform.position);
+        var lookDirection = lookRotation * Vector3.forward;
+        var leftRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y + rotateSpeed * Time.deltaTime, transform.rotation.eulerAngles.z);
+        var leftDirection = leftRotation * Vector3.forward;
+        var rightRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y - rotateSpeed * Time.deltaTime, transform.rotation.eulerAngles.z);
+        var rightDirection = rightRotation * Vector3.forward;
+        var currentDirection = transform.rotation * Vector3.forward;
+        var currentAngle = Vector3.Angle(lookDirection, currentDirection);
+        if (currentAngle >= minAngleToRotateDegree)
+        {
+            transform.rotation = Vector3.Angle(lookDirection, leftDirection) < Vector3.Angle(lookDirection, rightDirection) ?
+                leftRotation :
+                rightRotation;
+        }
+
+        return currentAngle > angleRotatedDegree;
     }
 
     public void StartMovement()
