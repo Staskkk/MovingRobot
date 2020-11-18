@@ -53,7 +53,7 @@ public class CurveTravel : ITravel
             {
                 public class FuncManager
                 {
-                    public float Function(float x)
+                    public double Function(double x)
                     {
                         " + funcCode + @"
                     }
@@ -65,11 +65,11 @@ public class CurveTravel : ITravel
 
     private float GetFuncValue(float x)
     {
-        return (float)funcType.InvokeMember(
+        return (float) (double) funcType.InvokeMember(
             "Function",
             BindingFlags.Default | BindingFlags.InvokeMethod,
             null,
             funcInstance,
-            new object[] { x });
+            new object[] { (double) x });
     }
 }
